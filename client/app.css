@@ -3,6 +3,8 @@
   padding: 40px ;
   height: auto;
   width:100%;
+  max-width: 850px;
+  margin: 0 auto;
 }
 
 .file-input-hover{

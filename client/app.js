@@ -22,30 +22,34 @@ class FileInput extends React.Component{
 
   render(){
     return(
-      <div className='jumbotron'>
-        <form className='file-input-area' id='imageForm' encType="multipart/form-data">
+        <form className='file-input-area jumbotron' id='imageForm' encType="multipart/form-data">
           <label htmlFor='filetoupload'>Upload 2-4 images. Drag and drop or choose from a folder.</label>
           <hr/>
-          <input onDrop={this.drop} onDragEnter={this.dragEnter} onDragLeave={this.dragLeave}  id="fileInput" type="file" name="filetoupload" multiple  max="4" min='2' onChange={this.props.saveImagesOnchange}/>
+          <input
+            onDrop={this.drop}
+            onDragEnter={this.dragEnter}
+            onDragLeave={this.dragLeave}
+            onChange={this.props.saveImagesOnchange}
+            id="fileInput" type="file"
+            name="filetoupload" multiple  max="4" min='2'/>
+            <button className='btn btn-primary' onClick={this.props.sendPhotosToBeStiched}>Send Pictures</button>
         </form>
-        <button className='btn btn-primary' onClick={this.props.sendPhotosToBeStiched}>Send Pictures</button>
-      </div>
+
     )
   }
 }
 
-class ImageDisplay extends React.Component{
-  render(){
+// class ImageDisplay extends React.Component{
+const ImageDisplay = ({imageUrl, displayImage})=>{
     return(
-      <div id='imagePreviewArea' style={{display:this.props.displayImage}}>
-        <h1>View Stiched Image</h1>
+      <div id='imagePreviewArea' className='text-center' style={{display:displayImage}}>
+        <h2>View Stiched Image</h2>
         <h4>Click image to download</h4>
-        <a download href={this.props.imageUrl}>
-        <img id='imagePreview' src={this.props.imageUrl}/>
+        <a download href={imageUrl}>
+          <img id='imagePreview' src={imageUrl}/>
         </a>
       </div>
     )
-  }
 }
 
 const Header = ()=>{
@@ -82,18 +86,13 @@ class App extends React.Component{
         })
       })
       .catch((err)=>{
+        alert(err)
         alert('Opps something went wrong. Check your file extensions and try again. ')
       })
     } else {
         alert(" Check Your files your files you have to have more then 1 and max 4 images. Or you files were not images")
       }
 
-  }
-
-  checkFileExtensions(files){
-    for(let i = 0; i<files.length;i++){
-      console.log(files[i].type)
-    }
   }
 
   checkFiles(files){
