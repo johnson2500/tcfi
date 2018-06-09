@@ -3,40 +3,41 @@ const mergeImg = require('merge-img')
 const formidable = require('formidable');
 
 app.get('/', (req, res) => res.sendFile(__dirname + '/client/index.html'))
-
 app.get('/app.js', (req, res) => res.sendFile(__dirname + '/client/app.js'))
-
 app.get('/app.css', (req, res) => res.sendFile(__dirname + '/client/app.css'))
 
-app.get('/client/download.png',(req,res)=>{
-  console.log('getting image');
+app.get('/client/download.png',(req,res)=>{ // send bad image url
   res.sendFile(__dirname + '/client/download.png')
 })
 
-app.post('/fileupload', function (req, res) {
+app.post('/fileupload', (req, res,next)=>{ // on file upload
   let imageArr = []
   var form = new formidable.IncomingForm();
-  // parse the req to get the formData
+  // parse the req to get the formData object
   form.parse(req);
   //when file is ready to be written to the temp folder
-  form.on('fileBegin', function (name, file){
+  form.on('fileBegin',(name, file)=>{
       file.path = __dirname + '/tempfolder/' + file.name;
-      imageArr.push(__dirname + '/tempfolder/' + file.name)
+      imageArr.push(__dirname + '/tempfolder/' + file.name); // add images to array to be passed to the merge-img function
   });
 
-  form.on('error',(err)=>{
-    res.send("Error occured please try again")
+  form.on('file',(name, file)=>{
+    if(file.type !== 'image/png' && files !== 'image/jpg'){
+      next('Something went wrong') // send error if someone was using something other then the html form
+    }
   })
 
+  form.on('error',(err)=>{
+    res.send("Error occured please try again") // send error if the formidable framework was not working
+  })
   // when all files have been uploaded
   form.on('end',()=>{
     console.log(imageArr)
-    mergeImg(imageArr)
+    mergeImg(imageArr) // pass array of paths saved in tempfolder
     .then((img) => {
       // Save image as file
       img.write(__dirname + '/tempfolder/output.png', (img)=>{
-        console.log(img)
-        res.sendFile(__dirname + '/tempfolder/output.png')
+        res.sendFile(__dirname + '/tempfolder/output.png') // send the merged file to client to render
       })
     })
   })
@@ -44,7 +45,7 @@ app.post('/fileupload', function (req, res) {
 });
 
 app.get("*",(req,res)=>{
-
+  res.send(":( Something went wrong please check your URL")
 })
 
-app.listen(3000, () => console.log('Example app listening on port 3000!'))
+app.listen(3000, () => console.log('listening on port 3000!'))

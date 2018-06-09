@@ -9,20 +9,17 @@ class FileInput extends React.Component{
   }
 
   dragEnter(e){
-    e.preventDefault();
-    console.log(e)
-    e.target.classList.add('file-input-hover')
+    e.target.classList.add('file-input-hover') // add css styling
   }
 
   dragLeave(e){
-    e.preventDefault();
-    e.target.classList.toggle('file-input-hover')
+    e.target.classList.toggle('file-input-hover') // remove styling
   }
 
   drop(e){
     e.preventDefault();
     e.target.files= e.dataTransfer.files; // set draggable files to the input
-    e.target.classList.remove('file-input-hover')
+    e.target.classList.remove('file-input-hover') // remove class
   }
 
   render(){
@@ -46,7 +43,7 @@ class ImageDisplay extends React.Component{
 
   render(){
     return(
-      <div style={{display:this.props.displayImage}}>
+      <div id='imagePreviewArea' style={{display:this.props.displayImage}}>
         <h1>View Stiched Image</h1>
         <h4>Click image to download</h4>
         <a download href={this.props.imageUrl}>
@@ -92,7 +89,7 @@ class App extends React.Component{
         })
       })
       .catch((err)=>{
-        console.log(err);
+        this.alert('Opps something went wrong. Check your file extensions and try again. ')
       })
     } else {
         alert(" Check Your files your files you have to have more then 1 and max 4 images. Or you files were not images")}
@@ -102,7 +99,7 @@ class App extends React.Component{
   checkFiles(files){
     if(files.length <= 4 || files.length >= 2){ // check to make sure that the images can be stiched
       for(var i = 0;i < files.length; i++){ // check to make sure the files are actually images
-        if(files[i].type !== 'image/png' && files[i] !== 'image/jpg')
+        if(files[i].type !== 'image/png' && files[i].type !== 'image/jpg')
           return false
       }
       return true // if all files are of the right type

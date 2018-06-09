@@ -6,7 +6,7 @@
 }
 
 .file-input-hover{
-  border: 3px dashed black;
+  border: 3px dashed black !important;
   box-shadow: 10px 10px;
 }
 
@@ -21,4 +21,9 @@
 #imagePreview{
   width: 100%;
   max-width: 500px;
+  border: 1px solid grey;
+}
+
+#imagePreviewArea{
+  padding: 50px;
 }
