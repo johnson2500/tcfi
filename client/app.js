@@ -22,34 +22,36 @@ class FileInput extends React.Component{
 
   render(){
     return(
-        <form className='file-input-area jumbotron' id='imageForm' encType="multipart/form-data">
-          <label htmlFor='filetoupload'>Upload 2-4 images. Drag and drop or choose from a folder.</label>
-          <hr/>
-          <input
-            onDrop={this.drop}
-            onDragEnter={this.dragEnter}
-            onDragLeave={this.dragLeave}
-            onChange={this.props.saveImagesOnchange}
-            id="fileInput" type="file"
-            name="filetoupload" multiple  max="4" min='2'/>
-            <button className='btn btn-primary' onClick={this.props.sendPhotosToBeStiched}>Send Pictures</button>
-        </form>
-
+      <form className='file-input-area jumbotron' id='imageForm' encType="multipart/form-data">
+        <label htmlFor='filetoupload'>Upload 2-4 images. Drag and drop or choose from a folder.</label>
+        <hr/>
+        <input
+          onDrop={this.drop}
+          onDragEnter={this.dragEnter}
+          onDragLeave={this.dragLeave}
+          onChange={this.props.saveImagesOnchange}
+          id="fileInput"
+          type="file"
+          name="filetoupload"
+          multiple  max="4" min='2'
+        />
+        <button className='btn btn-primary' onClick={this.props.sendPhotosToBeStiched}>Send Pictures</button>
+      </form>
     )
   }
 }
 
 // class ImageDisplay extends React.Component{
 const ImageDisplay = ({imageUrl, displayImage})=>{
-    return(
-      <div id='imagePreviewArea' className='text-center' style={{display:displayImage}}>
-        <h2>View Stiched Image</h2>
-        <h4>Click image to download</h4>
-        <a download href={imageUrl}>
-          <img id='imagePreview' src={imageUrl}/>
-        </a>
-      </div>
-    )
+  return(
+    <div id='imagePreviewArea' className='text-center' style={{display:displayImage}}>
+      <h2>View Stiched Image</h2>
+      <h4>Click image to download</h4>
+      <a download href={imageUrl}>
+        <img id='imagePreview' src={imageUrl}/>
+      </a>
+    </div>
+  )
 }
 
 const Header = ()=>{
@@ -72,7 +74,7 @@ class App extends React.Component{
   sendPhotosToBeStiched(e){
     e.preventDefault()
     // create form data object that can be process on the server
-    if(this.checkFiles(document.getElementById('fileInput').files)){
+    if(this.checkFiles(this.imageFiles.files)){
       var formData = new FormData(this.files);
       fetch('http://localhost:3000/fileupload',{
         method: 'POST', // Post method
@@ -110,6 +112,10 @@ class App extends React.Component{
   saveImagesOnchange(e){
     e.preventDefault()
     this.files = document.getElementById('imageForm')
+  }
+
+  componentDidMount(){
+    this.imageFiles = document.getElementById('fileInput')
   }
 
   render(){
