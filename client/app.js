@@ -1,22 +1,39 @@
 class FileInput extends React.Component{
+
   constructor(){
     super()
+    this.drop = this.drop.bind(this)
+    this.dragLeave = this.dragLeave.bind(this)
+    this.dragEnter = this.dragEnter.bind(this)
+
   }
 
-  componentDidMount(){
-    document.getElementById("imageUpload").addEventListener("click", function(event){
-      event.preventDefault()
-    });
+  dragEnter(e){
+    e.preventDefault();
+    console.log(e)
+    e.target.classList.add('file-input-hover')
+  }
+
+  dragLeave(e){
+    e.preventDefault();
+    e.target.classList.toggle('file-input-hover')
+  }
+
+  drop(e){
+    e.preventDefault();
+    e.target.files= e.dataTransfer.files; // set draggable files to the input
+    e.target.classList.remove('file-input-hover')
   }
 
   render(){
     return(
       <div className='jumbotron'>
-        <form  action="fileupload" method="post" encType="multipart/form-data">
-          <input type="file" name="filetoupload" multiple  max="4" min='2'/>
-          <br/>
-          <input id='imageUpload' type="submit"/>
+        <form className='file-input-area' id='imageForm' encType="multipart/form-data">
+          <label htmlFor='filetoupload'>Upload 2-4 images. Drag and drop or choose from a folder.</label>
+          <hr/>
+          <input onDrop={this.drop} onDragEnter={this.dragEnter} onDragLeave={this.dragLeave}  id="fileInput" type="file" name="filetoupload" multiple  max="4" min='2' onChange={this.props.saveImagesOnchange}/>
         </form>
+        <button className='btn btn-primary' onClick={this.props.sendPhotosToBeStiched}>Send Pictures</button>
       </div>
     )
   }
@@ -29,10 +46,12 @@ class ImageDisplay extends React.Component{
 
   render(){
     return(
-      <div style={{display:'none'}}>
-        <h1>
-          Testing
-        </h1>
+      <div style={{display:this.props.displayImage}}>
+        <h1>View Stiched Image</h1>
+        <h4>Click image to download</h4>
+        <a download href={this.props.imageUrl}>
+        <img id='imagePreview' src={this.props.imageUrl}/>
+        </a>
       </div>
     )
   }
@@ -49,51 +68,63 @@ const Header = ()=>{
 class App extends React.Component{
   constructor(){
     super()
-    this.images;
+    this.state = {
+      displayImage : 'none' ,
+      imageUrl:'http://localhost:3000/client/download.png'
+    }
   }
 
   sendPhotosToBeStiched(e){
     e.preventDefault()
-    console.log("stiching")
-    fetch('http://localhost:3000/mergeimg',{
-      method: 'POST',
-      body : this.images
-    })
-    .then(()=>{
-      console.log('good')
-    })
-    .catch((err)=>{
-      console.log(err);
-    })
-
-
-    var xhr = new XMLHttpRequest() xhr.open("POST", "myscript.php");
-    xhr.onload= function(event){ alert("The server says: " + event.target.response); }; 
-    var formData = new FormData(document.getElementById("myForm"));
-    xhr.send(formData);
-
+    // create form data object that can be process on the server
+    console.log('files good', this.checkFiles(document.getElementById('fileInput').files))
+    if(this.checkFiles(document.getElementById('fileInput').files)){
+      var formData = new FormData(this.files);
+      fetch('http://localhost:3000/fileupload',{
+        method: 'POST', // Post method
+        body : formData
+      })
+      .then((res)=>res.blob()) // create blob
+      .then(blob=>{
+        this.setState({
+          imageUrl:(window.URL).createObjectURL(blob),// convert blob to usable URL
+          displayImage: "" // show image
+        })
+      })
+      .catch((err)=>{
+        console.log(err);
+      })
+    } else {
+        alert(" Check Your files your files you have to have more then 1 and max 4 images. Or you files were not images")}
 
   }
 
+  checkFiles(files){
+    if(files.length <= 4 || files.length >= 2){ // check to make sure that the images can be stiched
+      for(var i = 0;i < files.length; i++){ // check to make sure the files are actually images
+        if(files[i].type !== 'image/png' && files[i] !== 'image/jpg')
+          return false
+      }
+      return true // if all files are of the right type
+    } else {
+      return false // files are not the correct length
+    }
+  }
+
   saveImagesOnchange(e){
-    const formData = new FormData()
-    formData.append('photo',e.target.files[0])
-    formData.append('enctype', 'some value user types');
-    formData.append('description', 'some value user types');
-    this.images = formData
-    console.log(this.images,formData)
+    e.preventDefault()
+    this.files = document.getElementById('imageForm')
   }
 
   render(){
     return(
       <div>
         <Header />
-        <FileInput buttonHandler={this.sendPhotosToBeStiched.bind(this)} saveImagesOnchange={this.saveImagesOnchange.bind(this)}/>
-        <ImageDisplay />
+        <FileInput sendPhotosToBeStiched={this.sendPhotosToBeStiched.bind(this)} saveImagesOnchange={this.saveImagesOnchange.bind(this)}/>
+        <ImageDisplay imageUrl = {this.state.imageUrl} displayImage={this.state.displayImage}/>
       </div>
     )
   }
 }
-
 
 ReactDOM.render(React.createElement(App,{},null),document.getElementById('root'))

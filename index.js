@@ -1,21 +1,17 @@
 const app = require('express')()
-const bodyParser = require('body-parser')
-const fs = require('fs')
 const mergeImg = require('merge-img')
 const formidable = require('formidable');
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-// app.use(formidable({
-//   encoding: 'utf-8',
-//   uploadDir: __dirname + '/tempfolder',
-//   multiples: true
-// }))
 app.get('/', (req, res) => res.sendFile(__dirname + '/client/index.html'))
 
 app.get('/app.js', (req, res) => res.sendFile(__dirname + '/client/app.js'))
 
 app.get('/app.css', (req, res) => res.sendFile(__dirname + '/client/app.css'))
+
+app.get('/client/download.png',(req,res)=>{
+  console.log('getting image');
+  res.sendFile(__dirname + '/client/download.png')
+})
 
 app.post('/fileupload', function (req, res) {
   let imageArr = []
@@ -38,7 +34,8 @@ app.post('/fileupload', function (req, res) {
     mergeImg(imageArr)
     .then((img) => {
       // Save image as file
-      img.write(__dirname + '/tempfolder/output.png', ()=>{
+      img.write(__dirname + '/tempfolder/output.png', (img)=>{
+        console.log(img)
         res.sendFile(__dirname + '/tempfolder/output.png')
       })
     })
