@@ -22,7 +22,8 @@ app.post('/fileupload', (req, res,next)=>{ // on file upload
   });
 
   form.on('file',(name, file)=>{
-    if(file.type !== 'image/png' && files !== 'image/jpg'){
+    console.log(file.type)
+    if(!file.type.includes('image')){
       next('Something went wrong') // send error if someone was using something other then the html form
     }
   })

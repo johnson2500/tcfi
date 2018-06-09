@@ -1,11 +1,9 @@
 class FileInput extends React.Component{
-
   constructor(){
     super()
     this.drop = this.drop.bind(this)
     this.dragLeave = this.dragLeave.bind(this)
     this.dragEnter = this.dragEnter.bind(this)
-
   }
 
   dragEnter(e){
@@ -37,10 +35,6 @@ class FileInput extends React.Component{
 }
 
 class ImageDisplay extends React.Component{
-  constructor(){
-    super()
-  }
-
   render(){
     return(
       <div id='imagePreviewArea' style={{display:this.props.displayImage}}>
@@ -74,14 +68,13 @@ class App extends React.Component{
   sendPhotosToBeStiched(e){
     e.preventDefault()
     // create form data object that can be process on the server
-    console.log('files good', this.checkFiles(document.getElementById('fileInput').files))
     if(this.checkFiles(document.getElementById('fileInput').files)){
       var formData = new FormData(this.files);
       fetch('http://localhost:3000/fileupload',{
         method: 'POST', // Post method
         body : formData
       })
-      .then((res)=>res.blob()) // create blob
+      .then(res=>res.blob()) // create blob
       .then(blob=>{
         this.setState({
           imageUrl:(window.URL).createObjectURL(blob),// convert blob to usable URL
@@ -89,17 +82,25 @@ class App extends React.Component{
         })
       })
       .catch((err)=>{
-        this.alert('Opps something went wrong. Check your file extensions and try again. ')
+        alert('Opps something went wrong. Check your file extensions and try again. ')
       })
     } else {
-        alert(" Check Your files your files you have to have more then 1 and max 4 images. Or you files were not images")}
+        alert(" Check Your files your files you have to have more then 1 and max 4 images. Or you files were not images")
+      }
 
+  }
+
+  checkFileExtensions(files){
+    for(let i = 0; i<files.length;i++){
+      console.log(files[i].type)
+    }
   }
 
   checkFiles(files){
     if(files.length <= 4 || files.length >= 2){ // check to make sure that the images can be stiched
       for(var i = 0;i < files.length; i++){ // check to make sure the files are actually images
-        if(files[i].type !== 'image/png' && files[i].type !== 'image/jpg')
+        console.log(files[i].type.includes('image'))
+        if(!files[i].type.includes('image'))
           return false
       }
       return true // if all files are of the right type
