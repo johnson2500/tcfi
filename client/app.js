@@ -1,3 +1,27 @@
+
+//=== Stateless components =====================================================
+const ImageDisplay = ({imageUrl, displayImage})=>{
+  return(
+    <div id='imagePreviewArea' className='text-center' style={{display:displayImage}}>
+      <h2>View Stiched Image</h2>
+      <h4>Click image to download</h4>
+      <a download href={imageUrl}>
+        <img id='imagePreview' src={imageUrl}/>
+      </a>
+    </div>
+  )
+}
+
+const Header = ()=>{
+  return (
+    <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
+      <h1 className="navbar-brand">Image Stitcher</h1>
+    </nav>
+  )
+}
+
+//=== Class components =========================================================
+
 class FileInput extends React.Component{
   constructor(){
     super()
@@ -41,44 +65,22 @@ class FileInput extends React.Component{
   }
 }
 
-// class ImageDisplay extends React.Component{
-const ImageDisplay = ({imageUrl, displayImage})=>{
-  return(
-    <div id='imagePreviewArea' className='text-center' style={{display:displayImage}}>
-      <h2>View Stiched Image</h2>
-      <h4>Click image to download</h4>
-      <a download href={imageUrl}>
-        <img id='imagePreview' src={imageUrl}/>
-      </a>
-    </div>
-  )
-}
-
-const Header = ()=>{
-  return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
-      <h1 className="navbar-brand" href="#">Image Stitcher</h1>
-    </nav>
-  )
-}
-
 class App extends React.Component{
   constructor(){
     super()
     this.state = {
       displayImage : 'none' ,
-      imageUrl:'http://localhost:3000/client/download.png'
+      imageUrl:'http://localhost:3000/client/download.png' // if image is bad show place holder
     }
   }
 
   sendPhotosToBeStiched(e){
     e.preventDefault()
     // create form data object that can be process on the server
-    if(this.checkFiles(this.imageFiles.files)){
-      var formData = new FormData(this.files);
+    if(this.checkFiles(this.imageInput.files)){
       fetch('http://localhost:3000/fileupload',{
         method: 'POST', // Post method
-        body : formData
+        body : new FormData(this.files)
       })
       .then(res=>res.blob()) // create blob
       .then(blob=>{
@@ -88,13 +90,11 @@ class App extends React.Component{
         })
       })
       .catch((err)=>{
-        alert(err)
         alert('Opps something went wrong. Check your file extensions and try again. ')
       })
     } else {
-        alert(" Check Your files your files you have to have more then 1 and max 4 images. Or you files were not images")
-      }
-
+      alert(" Check Your files your files you have to have more then 1 and max 4 images. Or you files were not images")
+    }
   }
 
   checkFiles(files){
@@ -115,18 +115,26 @@ class App extends React.Component{
   }
 
   componentDidMount(){
-    this.imageFiles = document.getElementById('fileInput')
+    this.imageInput = document.getElementById('fileInput')
   }
 
   render(){
     return(
       <div>
         <Header />
-        <FileInput sendPhotosToBeStiched={this.sendPhotosToBeStiched.bind(this)} saveImagesOnchange={this.saveImagesOnchange.bind(this)}/>
-        <ImageDisplay imageUrl = {this.state.imageUrl} displayImage={this.state.displayImage}/>
+        <FileInput
+          sendPhotosToBeStiched={this.sendPhotosToBeStiched.bind(this)}
+          saveImagesOnchange={this.saveImagesOnchange.bind(this)}
+        />
+        <ImageDisplay
+          imageUrl = {this.state.imageUrl}
+          displayImage={this.state.displayImage}
+        />
       </div>
     )
   }
 }
+
+//=== Render Components ========================================================
 
 ReactDOM.render(React.createElement(App,{},null),document.getElementById('root'))
