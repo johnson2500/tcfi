@@ -12,7 +12,7 @@ app.get('/client/download.png',(req,res)=>{ // send bad image url
 
 app.post('/fileupload', (req, res,next)=>{ // on file upload
   let imageArr = []
-  var form = new formidable.IncomingForm();
+  let form = new formidable.IncomingForm();
   // parse the req to get the formData object
   form.parse(req);
   //when file is ready to be written to the temp folder
