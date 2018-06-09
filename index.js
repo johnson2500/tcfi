@@ -17,12 +17,11 @@ app.post('/fileupload', (req, res,next)=>{ // on file upload
   form.parse(req);
   //when file is ready to be written to the temp folder
   form.on('fileBegin',(name, file)=>{
-      file.path = __dirname + '/tempfolder/' + file.name;
-      imageArr.push(__dirname + '/tempfolder/' + file.name); // add images to array to be passed to the merge-img function
+    file.path = __dirname + '/tempfolder/' + file.name;
+    imageArr.push(__dirname + '/tempfolder/' + file.name); // add images to array to be passed to the merge-img function
   });
 
   form.on('file',(name, file)=>{
-    console.log(file.type)
     if(!file.type.includes('image')){
       next('Something went wrong') // send error if someone was using something other then the html form
     }
@@ -35,8 +34,7 @@ app.post('/fileupload', (req, res,next)=>{ // on file upload
   form.on('end',()=>{
     mergeImg(imageArr) // pass array of paths saved in tempfolder
     .then((img) => {
-      // Save image as file
-      img.write(__dirname + '/tempfolder/output.png', (img)=>{
+      img.write(__dirname + '/tempfolder/output.png', (img)=>{// Save image as file
         res.sendFile(__dirname + '/tempfolder/output.png') // send the merged file to client to render
       })
     })

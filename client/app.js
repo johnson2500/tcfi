@@ -99,7 +99,6 @@ class App extends React.Component{
   checkFiles(files){
     if(files.length <= 4 || files.length >= 2){ // check to make sure that the images can be stiched
       for(var i = 0;i < files.length; i++){ // check to make sure the files are actually images
-        console.log(files[i].type.includes('image'))
         if(!files[i].type.includes('image'))
           return false
       }
