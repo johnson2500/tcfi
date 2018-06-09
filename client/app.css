@@ -1,0 +1,10 @@
+.file-input-area{
+  margin:10px;
+  padding: 40px;
+  height: 100px !important;
+  border: 1px dashed black;
+}
+
+#fileElem{
+  margin: 0 auto
+}
