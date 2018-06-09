@@ -1,5 +1,9 @@
+.app{
+  min-height: 100vh;
+}
+
 .file-input-area{
-  margin:10px;
+  margin-top:10px !important;
   padding: 40px ;
   height: auto;
   width:100%;
@@ -18,8 +22,9 @@
   padding: 100px;
   width: 100%;
 }
-
-
+.margin-button{
+  margin-top: 10px;
+}
 #imagePreview{
   width: 100%;
   max-width: 500px;
@@ -28,4 +33,12 @@
 
 #imagePreviewArea{
   padding: 50px;
+}
+
+.footer{
+  margin-top: 40px ;
+}
+
+.white-text{
+  color: white !important;
 }
