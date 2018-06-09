@@ -32,7 +32,6 @@ app.post('/fileupload', (req, res,next)=>{ // on file upload
   })
   // when all files have been uploaded
   form.on('end',()=>{
-    console.log(imageArr)
     mergeImg(imageArr) // pass array of paths saved in tempfolder
     .then((img) => {
       // Save image as file

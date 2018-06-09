@@ -57,7 +57,7 @@ class ImageDisplay extends React.Component{
 const Header = ()=>{
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
-      <h1 className="navbar-brand" href="#">Testing</h1>
+      <h1 className="navbar-brand" href="#">Image Stitcher</h1>
     </nav>
   )
 }
